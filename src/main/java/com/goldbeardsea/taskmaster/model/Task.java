@@ -13,13 +13,14 @@ public class Task {
     private String title;
     private String description;
     private String status;
+    private String[] statuses = {"Available", "Assigned", "Accepted", "Finished"};
 
     public Task() {}
 
     public Task(String title, String description, String status) {
         this.title = title;
         this.description = description;
-        this.status = status;
+        this.status = statuses[0];
     }
 
     @DynamoDBHashKey
@@ -61,5 +62,10 @@ public class Task {
     @DynamoDBAttribute
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @DynamoDBAttribute
+    public String[] getStatuses() {
+        return statuses;
     }
 }
