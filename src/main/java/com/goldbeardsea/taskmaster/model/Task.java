@@ -14,6 +14,8 @@ public class Task {
     private String description;
     private String status;
     private String[] statuses = {"Available", "Assigned", "Accepted", "Finished"};
+    private String picUrl;
+    private String assignee;
 
     public Task() {}
 
@@ -67,5 +69,25 @@ public class Task {
     @DynamoDBAttribute
     public String[] getStatuses() {
         return statuses;
+    }
+
+    @DynamoDBAttribute
+    public String getPicUrl() {
+        return picUrl;
+    }
+
+    @DynamoDBAttribute
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
+    }
+
+    @DynamoDBAttribute
+    public String getAssignee() {
+        return assignee;
+    }
+
+    @DynamoDBAttribute
+    public void setAssignee(String assignee) {
+        this.assignee = assignee;
     }
 }
