@@ -1,20 +1,23 @@
 package com.goldbeardsea.taskmaster.controller;
 
+import com.goldbeardsea.taskmaster.config.S3Client;
 import com.goldbeardsea.taskmaster.model.Task;
 import com.goldbeardsea.taskmaster.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 public class TaskController {
+
+    private S3Client s3Client;
+
     @Autowired
     TaskRepository taskRepository;
 
@@ -46,4 +49,16 @@ public class TaskController {
 //        task.get().setStatus();
         return task.get();
     }
+
+    @PostMapping("/tasks/{id}/images")
+    public Task uploadFile(@RequestParam("uuid") String id, @RequestPart(value = "file") MultipartFile file){
+
+        String pic = this.s3Client.uploadFile(file);
+        Optional<Task> updatingImageTask = taskRepository.findById(id);
+        Task task = updatingImageTask.get();
+        task.setPicUrl(pic);
+        taskRepository.save(task);
+        return task;
+    }
+
 }
