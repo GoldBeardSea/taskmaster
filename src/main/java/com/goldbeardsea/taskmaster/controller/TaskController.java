@@ -4,16 +4,14 @@ import com.goldbeardsea.taskmaster.config.S3Client;
 import com.goldbeardsea.taskmaster.model.Task;
 import com.goldbeardsea.taskmaster.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.UUID;
 
-@Controller
+@RestController
+@CrossOrigin
 public class TaskController {
 
     private S3Client s3Client;
@@ -21,33 +19,32 @@ public class TaskController {
     @Autowired
     TaskRepository taskRepository;
 
-    //tasks
+    // gets tasks
     @GetMapping("/tasks")
-    public ArrayList<Task> getAllTasks(Model m) {
+    public ArrayList<Task> getAllTasks() {
         ArrayList<Task> arrayList = (ArrayList<Task>) taskRepository.findAll();
         return arrayList;
     }
 
-    @PostMapping("/tasks")
-    public Task taskCreation(@RequestParam String title, @RequestParam String description) {
-        Task newTask = new Task(title, description, "Available");
-        taskRepository.save(newTask);
-        return newTask;
-    }
-
     @GetMapping("/users/{name}/tasks")
-    public ArrayList<Task> getTasks(@RequestParam String name) {
-        ArrayList arrayList = (ArrayList) taskRepository.findAll();
-        // iterate across the lists and remove all non assigned name objects
-        return arrayList;
+    public ArrayList<Task> getAssigneeTasks(@RequestParam String assignee){
+        return taskRepository.findByAssignee(assignee);
     }
 
-    @PutMapping("/tasks/{id}/state")
-    public Task updateTask(@RequestParam String id) {
-        Optional<Task> task = taskRepository.findById(id);
-//        Grab the object advance the status as long as it can be advanced.
-//        task.get().setStatus();
-        return task.get();
+    // posts things
+    @PostMapping("/tasks")
+    public Task taskCreation(@RequestParam String title, @RequestParam String description, @RequestParam String assignee) {
+        if (assignee != null) {
+            Task newTask = new Task(title, description, "Assigned");
+            newTask.setAssignee(assignee);
+            taskRepository.save(newTask);
+            return newTask;
+        } else {
+            Task newTask = new Task(title, description, "Available");
+            taskRepository.save(newTask);
+            return newTask;
+        }
+
     }
 
     @PostMapping("/tasks/{id}/images")
@@ -59,6 +56,22 @@ public class TaskController {
         task.setPicUrl(pic);
         taskRepository.save(task);
         return task;
+    }
+
+    // updates tasks
+    @PutMapping("/tasks/{id}/state")
+    public void advanceTaskStatus(@RequestParam String id){
+        Task currentTask = taskRepository.findById(id).get();
+        currentTask.advanceTask();
+        taskRepository.save(currentTask);
+    }
+
+    @PutMapping("/tasks/{id}/state/{assignee}")
+    public void assignTask(@PathVariable String id, @PathVariable String assignee){
+        Task currentTask = taskRepository.findById(id).get();
+        currentTask.setAssignee(assignee);
+        currentTask.advanceTask();
+        taskRepository.save(currentTask);
     }
 
 }
