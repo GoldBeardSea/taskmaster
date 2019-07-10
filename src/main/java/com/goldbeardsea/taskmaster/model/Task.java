@@ -90,4 +90,14 @@ public class Task {
     public void setAssignee(String assignee) {
         this.assignee = assignee;
     }
+
+    public void advanceTask() {
+        if (this.status.equals(statuses[0])) {
+            this.status = statuses[1];
+        } else if (this.status.equals(statuses[1])) {
+            this.status = statuses[2];
+        } else if (this.status.equals(statuses[2])) {
+            this.status = statuses[3];
+        }
+    }
 }
