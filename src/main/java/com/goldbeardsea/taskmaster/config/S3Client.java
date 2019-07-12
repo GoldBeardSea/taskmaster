@@ -42,25 +42,25 @@ public class S3Client {
     }
 
     public String uploadFile(MultipartFile multipartFile) {
-        String fileUrl = "";
+        String fileURL = "";
         try {
             File file = convertMultiPartToFile(multipartFile);
             String fileName = generateFileName(multipartFile);
-            fileUrl = endpointUrl + "/" + fileName;
+            fileURL = endpointUrl + "/" + fileName;
             uploadFileTos3bucket(fileName, file);
             file.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return fileUrl;
+        return fileURL;
     }
 
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return convFile;
+        File convertedFile = new File(file.getOriginalFilename());
+        FileOutputStream fileOutputStream = new FileOutputStream(convertedFile);
+        fileOutputStream.write(file.getBytes());
+        fileOutputStream.close();
+        return convertedFile;
     }
 
     private String generateFileName(MultipartFile multiPart) {
