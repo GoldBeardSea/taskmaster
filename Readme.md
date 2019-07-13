@@ -7,6 +7,10 @@ This is the server that handles S3 and Dynamo DB operations while also setting u
 
 The Front end is the Taskmaster Front end and it is ran in react. 
 
+## Content 
+
+With Taskmaster you can create, edit, and assign tasks to specific people, and mark them finished when they are done. 
+
 ### Reference Documentation
 For further reference, please consider the following sections:
 
