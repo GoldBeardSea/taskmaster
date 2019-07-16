@@ -34,7 +34,7 @@ public class TaskController {
     // posts things
     @PostMapping("/tasks")
     public Task taskCreation(@RequestParam String title, @RequestParam String description, @RequestParam String assignee) {
-        if (assignee != null) {
+        if (!assignee.equals("")) {
             Task newTask = new Task(title, description, "Assigned");
             newTask.setAssignee(assignee);
             taskRepository.save(newTask);
